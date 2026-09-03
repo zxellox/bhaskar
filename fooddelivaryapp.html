@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siliguri Express - Fast Local Delivery Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        siliguri: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        tea: {
+                            50: '#fbf7ee',
+                            100: '#f3e8d2',
+                            500: '#b48135',
+                            700: '#784e1b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-marker {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 bg-slate-50 antialiased overflow-x-hidden">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 text-white text-xs py-2 px-4 text-center font-medium flex items-center justify-between">
+        <div class="hidden sm:flex items-center gap-2 max-w-7xl mx-auto w-full justify-between">
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Express Delivery Live in <strong>Siliguri Municipal Corporation & Matigara Blocks</strong></span>
+            </span>
+            <div class="flex items-center gap-4 text-emerald-200 text-xs">
+                <span><i class="fa-solid fa-bolt text-yellow-300 mr-1"></i> 30-45 Min Express Slot</span>
+                <span><i class="fa-solid fa-phone mr-1"></i> Helpline: +91 353 2950123</span>
+                <span class="bg-emerald-900/60 px-2 py-0.5 rounded text-[10px] text-emerald-300 border border-emerald-700">MySQL 8.0 Backend Enabled</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            
+            <!-- Logo & Siliguri Hub Tag -->
+            <div class="flex items-center gap-3">
+                <a href="#" onclick="switchTab('store')" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-600/20 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-truck-fast text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1">
+                            <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-900 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">Siliguri Express</span>
+                        </div>
+                        <p class="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest -mt-1">North Bengal Hub</p>
+                    </div>
+                </a>
+
+                <!-- Location Selector Badge -->
+                <div class="hidden md:flex items-center gap-2 ml-4 pl-4 border-l border-slate-200">
+                    <i class="fa-solid fa-location-dot text-emerald-600"></i>
+                    <div class="text-xs">
+                        <p class="text-slate-400 font-medium text-[10px] leading-tight">DELIVERING TO</p>
+                        <select id="userLocationSelect" onchange="updateLocation(this.value)" class="bg-transparent font-bold text-slate-800 focus:outline-none cursor-pointer py-0">
+                            <option value="734001">Hill Cart Road (734001)</option>
+                            <option value="734003">Pradhan Nagar (734003)</option>
+                            <option value="734005">Deshbandhu Para (734005)</option>
+                            <option value="734006">NBU / Shivmandir (734006)</option>
+                            <option value="734010" selected>Sevoke Road / Salugara (734010)</option>
+                            <option value="734011">Matigara / City Centre (734011)</option>
+                            <option value="734012">Medical College / Kawakhali (734012)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="hidden lg:flex flex-1 max-w-md mx-4 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Search Darjeeling Tea, Daily Groceries, Sweets..." class="w-full pl-9 pr-4 py-2 text-xs bg-slate-100 hover:bg-slate-200/70 focus:bg-white rounded-xl border border-transparent focus:border-emerald-500 focus:outline-none transition-all">
+            </div>
+
+            <!-- Action Buttons Navigation -->
+            <div class="flex items-center gap-2">
+                
+                <!-- Tab Switching Navigation -->
+                <nav class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                    <button id="nav-store" onclick="switchTab('store')" class="px-3 py-1.5 rounded-lg text-emerald-700 bg-white shadow-sm flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-store"></i> <span class="hidden sm:inline">Store</span>
+                    </button>
+                    <button id="nav-orders" onclick="switchTab('orders')" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-route"></i> <span class="hidden sm:inline">Track</span>
+                        <span id="activeOrdersBadge" class="hidden bg-emerald-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">1</span>
+                    </button>
+                    <button id="nav-driver" onclick="switchTab('driver')" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-motorcycle"></i> <span class="hidden md:inline">Fleet</span>
+                    </button>
+                    <button id="nav-mysql" onclick="switchTab('mysql')" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-database text-amber-600"></i> <span class="hidden lg:inline">MySQL 8.0</span>
+                    </button>
+                </nav>
+
+                <!-- Cart Button -->
+                <button onclick="toggleCartDrawer(true)" class="relative bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-xl flex items-center justify-center shadow-md shadow-emerald-600/20 transition-all">
+                    <i class="fa-solid fa-bag-shopping text-sm"></i>
+                    <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 bg-slate-900 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Custom Toast Container -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+    <!-- MAIN APP WRAPPER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ==================== TAB 1: E-COMMERCE STOREFRONT ==================== -->
+        <section id="tab-store" class="space-y-6">
+            
+            <!-- Siliguri Hero Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-900 text-white p-6 sm:p-8 shadow-xl">
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-white text-9xl font-black">
+                    SILIGURI
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                        <i class="fa-solid fa-location-crosshairs"></i> Serving Siliguri Municipal Area & Junctions
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                        Fresh Groceries & Darjeeling Specialties Delivered in 30 Mins
+                    </h1>
+                    <p class="text-slate-300 text-sm mt-2 font-normal">
+                        Sourced straight from Matigara Wholesale Market, Bidhan Market, and local Siliguri artisans directly to your doorstep with real-time GPS tracking.
+                    </p>
+                    
+                    <!-- Quick Specs Badges -->
+                    <div class="flex flex-wrap items-center gap-4 mt-5 text-xs text-emerald-200">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-truck-ramp-box text-emerald-400"></i> Local Warehouses: Bidhan Market & Salugara</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-emerald-400"></i> Standard Delivery Fee: ₹25</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-database text-amber-400"></i> Powered by MySQL 8.0 DB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Hub Distance Estimator Bar -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-warehouse"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800">Nearest Hub Dispatch Center</p>
+                        <p class="text-slate-500" id="hubAddressText">Siliguri Central Hub - Bidhan Market Sector 2, Siliguri 734001</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-slate-600 divide-x divide-slate-200">
+                    <div class="pr-2">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Estimated Route</span>
+                        <span class="font-semibold text-slate-800" id="estDistance">3.2 km via Sevoke Rd</span>
+                    </div>
+                    <div class="pl-4">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Est. Delivery Time</span>
+                        <span class="font-bold text-emerald-600" id="estTime">25 - 35 Minutes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Filter -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-emerald-600 text-white shadow-sm transition-all">
+                    All Products
+                </button>
+                <button onclick="filterCategory('darjeeling-tea')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-all">
+                    🍵 Darjeeling Tea & Bakery
+                </button>
+                <button onclick="filterCategory('local-groceries')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-all">
+                    🥬 Daily Produce (Matigara Direct)
+                </button>
+                <button onclick="filterCategory('sweets-snacks')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-all">
+                    🍬 Siliguri Sweets & Snacks
+                </button>
+                <button onclick="filterCategory('medicines')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-all">
+                    💊 Essential Pharmacy
+                </button>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- JavaScript will populate products here -->
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: LIVE ORDER TRACKING & MAP ==================== -->
+        <section id="tab-orders" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Siliguri Live Delivery Tracking</h2>
+                    <p class="text-xs text-slate-500">Real-time status updates from dispatch hubs in Siliguri to your destination.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-slate-500">Active Order ID:</span>
+                    <span id="activeOrderIdDisplay" class="font-mono text-xs font-bold bg-slate-200 text-slate-800 px-2.5 py-1 rounded-lg">#SLG-88219</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Live Order Progress Card -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div>
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">In Transit</span>
+                                <h3 class="text-lg font-extrabold text-slate-900 mt-1" id="trackOrderTitle">Order #SLG-88219</h3>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">Estimated Time</p>
+                                <p class="text-xl font-black text-emerald-600" id="liveEtaText">18 Mins</p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Steps -->
+                        <div class="mt-6 space-y-6 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                            <div class="relative flex items-start gap-4">
+                                <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold z-10 shadow-md">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800">Order Confirmed & Saved to MySQL DB</h4>
+                                    <p class="text-[11px] text-slate-500">Bidhan Market Store Hub • 10:15 AM</p>
+                                </div>
+                            </div>
+
+                            <div class="relative flex items-start gap-4">
+                                <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold z-10 shadow-md">
+                                    <i class="fa-solid fa-box text-[10px]"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800">Packed & Dispatched</h4>
+                                    <p class="text-[11px] text-slate-500">Siliguri Central Warehouse • 10:22 AM</p>
+                                </div>
+                            </div>
+
+                            <div id="step-transit" class="relative flex items-start gap-4">
+                                <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold z-10 ring-4 ring-emerald-100 animate-pulse">
+                                    <i class="fa-solid fa-motorcycle text-[10px]"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-emerald-700">Out for Delivery via Sevoke Road</h4>
+                                    <p class="text-[11px] text-slate-500" id="agentLocationStatus">Agent near Venus More Junction</p>
+                                </div>
+                            </div>
+
+                            <div id="step-delivered" class="relative flex items-start gap-4 opacity-40">
+                                <div class="w-7 h-7 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-xs font-bold z-10">
+                                    <i class="fa-solid fa-house-chimney text-[10px]"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800">Delivered to Customer</h4>
+                                    <p class="text-[11px] text-slate-500">Destination Address in Siliguri</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Rider Info -->
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-emerald-800 text-white flex items-center justify-center font-bold text-sm">
+                                RB
+                            </div>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-900">Rajesh Barman</h5>
+                                <p class="text-[11px] text-slate-500"><i class="fa-solid fa-star text-amber-400 mr-1"></i>4.9 (240+ Siliguri Deliveries)</p>
+                            </div>
+                        </div>
+                        <a href="tel:+919800012345" onclick="event.preventDefault(); showToast('Simulating call to Rider Rajesh (+91 98000 12345)...', 'info')" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center hover:bg-emerald-200 transition-colors">
+                            <i class="fa-solid fa-phone text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Interactive Simulated Siliguri Route Map -->
+                <div class="lg:col-span-2 bg-slate-900 rounded-2xl p-4 flex flex-col justify-between border border-slate-800 shadow-lg relative min-h-[420px] overflow-hidden">
+                    <div class="flex items-center justify-between bg-slate-800/80 backdrop-blur-md p-3 rounded-xl border border-slate-700/60 z-10 text-white text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-emerald-400"></i>
+                            <span class="font-bold">Live GPS Map Simulator (Siliguri Region)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[11px]">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span class="text-emerald-300 font-mono">LIVE GPS FEED</span>
+                        </div>
+                    </div>
+
+                    <!-- Visual SVG Map Representation of Siliguri Delivery Route -->
+                    <div class="absolute inset-0 pt-14 pb-4 px-4 flex items-center justify-center pointer-events-none">
+                        <svg class="w-full h-full max-h-[350px]" viewBox="0 0 600 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background Map Stylized Roads -->
+                            <!-- Hill Cart Road -->
+                            <path d="M 50 250 L 220 180 L 380 120 L 550 50" stroke="#334155" stroke-width="12" stroke-linecap="round"/>
+                            <!-- Sevoke Road -->
+                            <path d="M 220 180 L 260 80 L 400 30" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
+                            <!-- Matigara Bypass -->
+                            <path d="M 50 250 L 150 270 L 300 250 L 500 200" stroke="#1e293b" stroke-width="8" stroke-dasharray="6 6"/>
+
+                            <!-- Active Route Highlight -->
+                            <path id="deliveryRoutePath" d="M 80 240 L 220 180 L 260 80 L 380 40" stroke="#10b981" stroke-width="5" stroke-linecap="round" stroke-dasharray="8 4" class="opacity-80"/>
+
+                            <!-- Landmarks -->
+                            <!-- Landmark 1: Bidhan Market Warehouse Hub -->
+                            <g transform="translate(80, 240)">
+                                <circle r="14" fill="#065f46" stroke="#10b981" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="bold">HUB</text>
+                                <text x="0" y="26" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold">Bidhan Market</text>
+                            </g>
+
+                            <!-- Landmark 2: Venus More Landmark -->
+                            <g transform="translate(220, 180)">
+                                <circle r="6" fill="#64748b"/>
+                                <text x="15" y="-5" fill="#64748b" font-size="8">Venus More</text>
+                            </g>
+
+                            <!-- Landmark 3: Payel Cinema Junction -->
+                            <g transform="translate(260, 80)">
+                                <circle r="6" fill="#64748b"/>
+                                <text x="-20" y="16" fill="#64748b" font-size="8">Payel Cinema</text>
+                            </g>
+
+                            <!-- Destination Pin: Salugara / Sevoke Road Customer -->
+                            <g transform="translate(380, 40)">
+                                <circle r="14" fill="#dc2626" stroke="#f87171" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10"><i class="fa-solid fa-house"></i>📍</text>
+                                <text x="0" y="-18" text-anchor="middle" fill="#f87171" font-size="9" font-weight="bold">Customer Home (734010)</text>
+                            </g>
+
+                            <!-- Animated Delivery Scooter Icon moving along coordinates -->
+                            <g id="animatedBike" transform="translate(150, 210)">
+                                <circle r="16" fill="#047857" class="pulse-marker"/>
+                                <circle r="12" fill="#10b981"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="10">🛵</text>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- Map Footer Control Panel -->
+                    <div class="relative z-10 bg-slate-800/90 backdrop-blur-md p-3 rounded-xl border border-slate-700/60 text-xs flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-300">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-emerald-400"></i>
+                            <span>Current GPS Coordinate: <strong id="gpsCoord" class="font-mono text-emerald-300">26.7271° N, 88.4236° E (Sevoke Rd)</strong></span>
+                        </div>
+                        <button onclick="simulateRiderMovement()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-play"></i> Simulate Live Movement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: DELIVERY FLEET PORTAL ==================== -->
+        <section id="tab-driver" class="hidden space-y-6">
+            <div class="bg-slate-900 text-white p-6 rounded-2xl border border-slate-800 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-2.5 py-1 rounded-md mb-2">
+                        <i class="fa-solid fa-shield-cat"></i> Siliguri Agent Operations Console
+                    </div>
+                    <h2 class="text-2xl font-black">Delivery Partner Fleet Dashboard</h2>
+                    <p class="text-xs text-slate-400 mt-1">Manage local dispatch orders in Siliguri, update status in MySQL database, and claim earnings.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">Today's Earnings</p>
+                        <p class="text-xl font-extrabold text-emerald-400">₹1,450.00</p>
+                    </div>
+                    <div class="bg-emerald-600/30 border border-emerald-500/40 p-3 rounded-xl text-center">
+                        <p class="text-xs font-bold text-emerald-300">8 Orders</p>
+                        <p class="text-[10px] text-slate-300">Completed Today</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fleet Dispatch Orders Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Siliguri Hub Active Dispatch Queue
+                    </h3>
+                    <span class="text-xs text-slate-500">Auto-synced with MySQL 8.0 `orders` table</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-700">
+                        <thead class="bg-slate-100 text-slate-500 uppercase text-[10px] tracking-wider font-bold">
+                            <tr>
+                                <th class="p-3.5">Order ID</th>
+                                <th class="p-3.5">Customer & Area</th>
+                                <th class="p-3.5">Items</th>
+                                <th class="p-3.5">Total & Payment</th>
+                                <th class="p-3.5">Delivery Pincode</th>
+                                <th class="p-3.5">Current Status</th>
+                                <th class="p-3.5 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driverOrdersTable" class="divide-y divide-slate-100 font-medium">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: MYSQL 8.0 ARCHITECTURE HUB ==================== -->
+        <section id="tab-mysql" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-amber-900 via-slate-900 to-slate-950 text-white p-6 rounded-2xl border border-amber-800/40 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 text-xs font-semibold px-2.5 py-1 rounded-md mb-2 border border-amber-500/30">
+                            <i class="fa-solid fa-database"></i> MySQL 8.0 Relational Logistics Backend Architecture
+                        </div>
+                        <h2 class="text-2xl font-black">Siliguri Express Database Design</h2>
+                        <p class="text-xs text-slate-300 mt-1">Production-ready MySQL 8.0 schema, spatial indices, CTEs, and JSON document queries built specifically for local Siliguri delivery logistics.</p>
+                    </div>
+                    <button onclick="copyMySqlSchema()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-amber-900/50 flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-copy"></i> Copy Full SQL Script
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Schema Viewer & Tables -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Sidebar: Tables List -->
+                <div class="lg:col-span-1 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-slate-400 mb-2">Siliguri Delivery Schema Tables</h3>
+                    
+                    <button onclick="showSqlTable('orders')" class="sql-tab-btn active w-full p-3 rounded-xl border border-emerald-500 bg-emerald-50 text-left transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-xs text-emerald-900 font-mono">delivery_orders</p>
+                            <p class="text-[10px] text-slate-500">Main orders table with spatial location & JSON status history</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-emerald-600"></i>
+                    </button>
+
+                    <button onclick="showSqlTable('products')" class="sql-tab-btn w-full p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-left transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-xs text-slate-800 font-mono">products</p>
+                            <p class="text-[10px] text-slate-500">Catalog, pricing, category, stock in Siliguri hubs</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                    </button>
+
+                    <button onclick="showSqlTable('hubs')" class="sql-tab-btn w-full p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-left transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-xs text-slate-800 font-mono">siliguri_hubs</p>
+                            <p class="text-[10px] text-slate-500">Local hubs (Bidhan Mkt, Matigara, Salugara) + Spatial Points</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                    </button>
+
+                    <button onclick="showSqlTable('agents')" class="sql-tab-btn w-full p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-left transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-xs text-slate-800 font-mono">delivery_agents</p>
+                            <p class="text-[10px] text-slate-500">Fleet agents, active status, current location coordinates</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                    </button>
+
+                    <button onclick="showSqlTable('queries')" class="sql-tab-btn w-full p-3 rounded-xl border border-amber-200 bg-amber-50/50 text-left transition-all flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-xs text-amber-900 font-mono">MySQL 8.0 Advanced Queries</p>
+                            <p class="text-[10px] text-amber-700">ST_Distance, CTEs, Window Functions, JSON_EXTRACT</p>
+                        </div>
+                        <i class="fa-solid fa-code text-xs text-amber-600"></i>
+                    </button>
+                </div>
+
+                <!-- Right Editor / Query Code Viewer -->
+                <div class="lg:col-span-2 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden flex flex-col shadow-xl">
+                    <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                        <span class="font-mono text-emerald-400 font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-xs"></i> <span id="sqlViewTitle">delivery_orders CREATE TABLE Script</span>
+                        </span>
+                        <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px]">MySQL 8.0.33</span>
+                    </div>
+
+                    <pre id="sqlCodeContainer" class="p-5 font-mono text-xs text-emerald-300 overflow-x-auto custom-scrollbar leading-relaxed h-[420px]">
+-- Select a table from the left menu to inspect MySQL 8.0 structure
+                    </pre>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SLIDE-OVER CART DRAWER -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+
+        <div class="fixed inset-y-0 right-0 pl-10 max-w-full flex">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <!-- Header -->
+                <div class="p-4 sm:p-6 bg-slate-900 text-white flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-emerald-400"></i>
+                        <h2 class="text-base font-bold">Your Delivery Basket</h2>
+                    </div>
+                    <button onclick="toggleCartDrawer(false)" class="text-slate-400 hover:text-white p-1 transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Checkout Summary Footer -->
+                <div class="p-4 sm:p-6 border-t border-slate-200 bg-slate-50 space-y-3">
+                    <div class="space-y-1 text-xs text-slate-600">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span id="cartSubtotal">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Siliguri Hub Delivery Fee</span>
+                            <span id="cartDeliveryFee" class="text-emerald-700 font-medium">₹25.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>West Bengal GST (5%)</span>
+                            <span id="cartTax">₹0.00</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-extrabold text-slate-900 pt-2 border-t border-slate-200">
+                            <span>Total Payable</span>
+                            <span id="cartTotal" class="text-emerald-700">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="openCheckoutModal()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition-all">
+                        <span>Proceed to Delivery Checkout</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-truck-ramp-box text-emerald-400"></i>
+                    <h3 class="font-bold text-sm">Siliguri Express Checkout</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="p-5 overflow-y-auto space-y-4 text-xs custom-scrollbar">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="custName" required placeholder="e.g. Subhashish Roy" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Phone Number (+91)</label>
+                        <input type="tel" id="custPhone" required placeholder="98320XXXXX" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Siliguri PIN Code</label>
+                        <select id="custPincode" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
+                            <option value="734001">734001 (Hill Cart Rd / Main)</option>
+                            <option value="734003">734003 (Pradhan Nagar)</option>
+                            <option value="734005">734005 (Deshbandhu Para)</option>
+                            <option value="734006">734006 (NBU / Shivmandir)</option>
+                            <option value="734010" selected>734010 (Sevoke Rd / Salugara)</option>
+                            <option value="734011">734011 (Matigara / City Centre)</option>
+                            <option value="734012">734012 (Medical College)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Delivery Address & Landmark in Siliguri</label>
+                    <textarea id="custAddress" required rows="2" placeholder="e.g. House #42, Near Payel Cinema Hall, Sevoke Road, Ward 10" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Payment Method</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="border border-slate-300 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-slate-50">
+                            <input type="radio" name="payment" value="UPI" checked class="text-emerald-600">
+                            <span class="font-semibold">UPI (GPay/Paytm)</span>
+                        </label>
+                        <label class="border border-slate-300 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-slate-50">
+                            <input type="radio" name="payment" value="COD" class="text-emerald-600">
+                            <span class="font-semibold">Cash on Delivery</span>
+                        </label>
+                        <label class="border border-slate-300 p-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-slate-50">
+                            <input type="radio" name="payment" value="CARD" class="text-emerald-600">
+                            <span class="font-semibold">Debit/Credit Card</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px] flex items-center gap-2">
+                    <i class="fa-solid fa-database text-amber-600"></i>
+                    <span>This action triggers an <code class="font-bold">INSERT INTO delivery_orders</code> statement mapped to MySQL 8.0 backend.</span>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-lg transition-all">
+                    Confirm Order & Dispatch Now
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // SILIGURI PRODUCT CATALOG & INITIAL DATA
+        // ==========================================
+        const PRODUCTS = [
+            {
+                id: 'p1',
+                name: 'Darjeeling First Flush Black Tea (250g)',
+                category: 'darjeeling-tea',
+                price: 480,
+                rating: 4.9,
+                hub: 'Bidhan Market Hub',
+                image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80',
+                description: 'Authentic 100% pure single-estate FTGFOP1 Darjeeling Tea directly sourced for Siliguri residents.'
+            },
+            {
+                id: 'p2',
+                name: 'Fresh Bengali Sweets - Mishti Doi (500g)',
+                category: 'sweets-snacks',
+                price: 160,
+                rating: 4.8,
+                hub: 'Sevoke Road Hub',
+                image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=400&q=80',
+                description: 'Traditional sweetened earthen pot curd made fresh daily by top Siliguri sweet artisans.'
+            },
+            {
+                id: 'p3',
+                name: 'Matigara Fresh Organic Vegetable Basket (5kg)',
+                category: 'local-groceries',
+                price: 290,
+                rating: 4.7,
+                hub: 'Matigara Wholesale Hub',
+                image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80',
+                description: 'Assorted seasonal vegetables (Potatoes, Cauliflower, Tomatoes, Spinach) sourced early morning from Matigara.'
+            },
+            {
+                id: 'p4',
+                name: 'Siliguri Baker\'s Choice Fresh White Bread & Cookies',
+                category: 'darjeeling-tea',
+                price: 110,
+                rating: 4.6,
+                hub: 'Bidhan Market Hub',
+                image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80',
+                description: 'Oven-fresh bread loaf and handmade butter cookies from local Hill Cart Road bakery.'
+            },
+            {
+                id: 'p5',
+                name: 'Chanachur Special Jalpai More Mix (400g)',
+                category: 'sweets-snacks',
+                price: 95,
+                rating: 4.9,
+                hub: 'Bidhan Market Hub',
+                image: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?auto=format&fit=crop&w=400&q=80',
+                description: 'Spicy Siliguri iconic tea-time crisp snack made with peanuts and aromatic spices.'
+            },
+            {
+                id: 'p6',
+                name: 'Essential First Aid & Health Kit',
+                category: 'medicines',
+                price: 350,
+                rating: 4.9,
+                hub: 'Pradhan Nagar Pharmacy Hub',
+                image: 'https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=400&q=80',
+                description: 'Emergency bandages, antiseptics, thermometer, and basic immunity boosters.'
+            },
+            {
+                id: 'p7',
+                name: 'Gobindobhog Rice Premium (2kg)',
+                category: 'local-groceries',
+                price: 220,
+                rating: 4.8,
+                hub: 'Matigara Wholesale Hub',
+                image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80',
+                description: 'Short grain, aromatic white rice for traditional Bengali Payesh and Khichudi.'
+            },
+            {
+                id: 'p8',
+                name: 'Darjeeling Green Tea Special Edition (100g)',
+                category: 'darjeeling-tea',
+                price: 320,
+                rating: 4.9,
+                hub: 'Bidhan Market Hub',
+                image: 'https://images.unsplash.com/photo-1627435601361-ec25f5b1d0e5?auto=format&fit=crop&w=400&q=80',
+                description: 'High altitude green tea loaded with antioxidants, packed in vacuum sealed foil.'
+            }
+        ];
+
+        // INITIAL MOCK ORDERS IN MYSQL DB
+        let mockOrders = [
+            {
+                id: 'SLG-88219',
+                customerName: 'Anirban Das',
+                phone: '+91 98321 44512',
+                pincode: '734010',
+                address: 'Plot 12, Sevoke Road, Near Payel Cinema, Siliguri',
+                items: 'Darjeeling First Flush (1), Mishti Doi (2)',
+                total: 800,
+                paymentMode: 'UPI',
+                status: 'OUT_FOR_DELIVERY',
+                hub: 'Bidhan Market Hub',
+                agent: 'Rajesh Barman'
+            },
+            {
+                id: 'SLG-88220',
+                customerName: 'Priya Sharma',
+                phone: '+91 94340 11234',
+                pincode: '734011',
+                address: 'Flat 3B, City Centre Enclave, Matigara, Siliguri',
+                items: 'Matigara Organic Veg Basket (1)',
+                total: 315,
+                paymentMode: 'COD',
+                status: 'PACKED',
+                hub: 'Matigara Wholesale Hub',
+                agent: 'Pending Assignment'
+            }
+        ];
+
+        // APP STATE
+        let cart = [];
+        let activeTab = 'store';
+        let movementInterval = null;
+        let gpsStep = 0;
+
+        // ==========================================
+        // INITIALIZATION & TAB CONTROLS
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProducts(PRODUCTS);
+            renderDriverOrdersTable();
+            showSqlTable('orders');
+            updateCartUI();
+        });
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            ['store', 'orders', 'driver', 'mysql'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === tabName) {
+                    el.classList.remove('hidden');
+                    btn.className = 'px-3 py-1.5 rounded-lg text-emerald-700 bg-white shadow-sm flex items-center gap-1.5 transition-all font-bold';
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all font-medium';
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // PRODUCT CATALOG FUNCTIONS
+        // ==========================================
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-box-open text-4xl mb-2"></i>
+                        <p class="text-sm font-semibold">No products found matching your search in Siliguri hub.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = items.map(p => `
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                    <div>
+                        <div class="relative h-44 overflow-hidden bg-slate-100">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/400x300/10b981/ffffff?text=Siliguri+Item'">
+                            <span class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                                <i class="fa-solid fa-warehouse text-emerald-400 mr-1"></i>${p.hub}
+                            </span>
+                            <span class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-md text-slate-800 text-[11px] font-extrabold px-2 py-0.5 rounded-md shadow-sm">
+                                <i class="fa-solid fa-star text-amber-400 mr-1"></i>${p.rating}
+                            </span>
+                        </div>
+
+                        <div class="p-4">
+                            <h3 class="font-bold text-slate-900 text-sm leading-snug group-hover:text-emerald-700 transition-colors">${p.name}</h3>
+                            <p class="text-slate-500 text-[11px] mt-1.5 line-clamp-2">${p.description}</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase block">Price</span>
+                            <span class="text-base font-black text-slate-900">₹${p.price.toFixed(2)}</span>
+                        </div>
+                        <button onclick="addToCart('${p.id}')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 active:scale-95 transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus text-[10px]"></i>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = 'cat-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition-all';
+            });
+            event.target.className = 'cat-btn active px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap bg-emerald-600 text-white shadow-sm transition-all';
+
+            if (cat === 'all') {
+                renderProducts(PRODUCTS);
+            } else {
+                renderProducts(PRODUCTS.filter(p => p.category === cat));
+            }
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = PRODUCTS.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.description.toLowerCase().includes(query)
+            );
+            renderProducts(filtered);
+        }
+
+        function updateLocation(pincode) {
+            const estDistances = {
+                '734001': { hub: 'Bidhan Market Hub, 734001', dist: '1.2 km via Hill Cart Rd', time: '15 - 20 Mins' },
+                '734003': { hub: 'Pradhan Nagar Hub, 734003', dist: '2.4 km via Junction Rd', time: '20 - 25 Mins' },
+                '734005': { hub: 'Deshbandhu Para Hub, 734005', dist: '2.8 km via Subhas Pally', time: '20 - 30 Mins' },
+                '734006': { hub: 'Matigara NBU Hub, 734006', dist: '6.5 km via Asian Highway 2', time: '30 - 40 Mins' },
+                '734010': { hub: 'Sevoke Road Hub, 734010', dist: '3.2 km via Sevoke Rd', time: '25 - 35 Mins' },
+                '734011': { hub: 'City Centre Matigara Hub, 734011', dist: '4.8 km via Khaprail Rd', time: '25 - 35 Mins' },
+                '734012': { hub: 'Kawakhali Medical Hub, 734012', dist: '7.1 km via NH31', time: '35 - 45 Mins' }
+            };
+
+            const info = estDistances[pincode] || estDistances['734010'];
+            document.getElementById('hubAddressText').innerText = info.hub;
+            document.getElementById('estDistance').innerText = info.dist;
+            document.getElementById('estTime').innerText = info.time;
+
+            showToast(`Delivery area updated to PIN ${pincode} (${info.dist})`, 'info');
+        }
+
+        // ==========================================
+        // CART & CHECKOUT LOGIC
+        // ==========================================
+        function addToCart(productId) {
+            const prod = PRODUCTS.find(p => p.id === productId);
+            const existing = cart.find(c => c.product.id === productId);
+
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ product: prod, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast(`Added "${prod.name}" to cart!`, 'success');
+        }
+
+        function updateCartQty(id, delta) {
+            const idx = cart.findIndex(c => c.product.id === id);
+            if (idx > -1) {
+                cart[idx].qty += delta;
+                if (cart[idx].qty <= 0) {
+                    cart.splice(idx, 1);
+                }
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCountBadge').innerText = totalItems;
+
+            const cartList = document.getElementById('cartItemsList');
+            if (cart.length === 0) {
+                cartList.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-2"></i>
+                        <p class="text-xs font-semibold">Your Siliguri basket is empty</p>
+                    </div>
+                `;
+            } else {
+                cartList.innerHTML = cart.map(item => `
+                    <div class="flex items-center justify-between gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.product.image}" class="w-12 h-12 rounded-lg object-cover">
+                            <div>
+                                <h4 class="font-bold text-slate-900 leading-tight">${item.product.name}</h4>
+                                <p class="text-slate-500 font-semibold mt-0.5">₹${item.product.price.toFixed(2)} each</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateCartQty('${item.product.id}', -1)" class="w-6 h-6 rounded-md bg-white border border-slate-300 text-slate-700 font-bold flex items-center justify-center hover:bg-slate-100">-</button>
+                            <span class="font-bold text-slate-800">${item.qty}</span>
+                            <button onclick="updateCartQty('${item.product.id}', 1)" class="w-6 h-6 rounded-md bg-white border border-slate-300 text-slate-700 font-bold flex items-center justify-center hover:bg-slate-100">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
+            const deliveryFee = subtotal > 0 ? 25 : 0;
+            const gst = subtotal * 0.05;
+            const grandTotal = subtotal + deliveryFee + gst;
+
+            document.getElementById('cartSubtotal').innerText = `₹${subtotal.toFixed(2)}`;
+            document.getElementById('cartDeliveryFee').innerText = subtotal > 0 ? `₹${deliveryFee.toFixed(2)}` : '₹0.00';
+            document.getElementById('cartTax').innerText = `₹${gst.toFixed(2)}`;
+            document.getElementById('cartTotal').innerText = `₹${grandTotal.toFixed(2)}`;
+        }
+
+        function toggleCartDrawer(show) {
+            const drawer = document.getElementById('cartDrawer');
+            if (show) drawer.classList.remove('hidden');
+            else drawer.classList.add('hidden');
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                showToast('Please add items to your delivery basket first.', 'warning');
+                return;
+            }
+            toggleCartDrawer(false);
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const pincode = document.getElementById('custPincode').value;
+            const address = document.getElementById('custAddress').value;
+            const paymentMode = document.querySelector('input[name="payment"]:checked').value;
+
+            const newOrderId = 'SLG-' + Math.floor(10000 + Math.random() * 90000);
+            const itemsSummary = cart.map(c => `${c.product.name} (${c.qty})`).join(', ');
+            const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
+            const grandTotal = subtotal + 25 + (subtotal * 0.05);
+
+            const newOrder = {
+                id: newOrderId,
+                customerName: name,
+                phone: phone,
+                pincode: pincode,
+                address: address,
+                items: itemsSummary,
+                total: Math.round(grandTotal),
+                paymentMode: paymentMode,
+                status: 'PACKED',
+                hub: 'Bidhan Market Hub',
+                agent: 'Assigned (Rajesh Barman)'
+            };
+
+            mockOrders.unshift(newOrder);
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+
+            // Update UI for newly created order
+            document.getElementById('activeOrderIdDisplay').innerText = `#${newOrderId}`;
+            document.getElementById('trackOrderTitle').innerText = `Order #${newOrderId}`;
+            renderDriverOrdersTable();
+
+            showToast(`Order #${newOrderId} placed & synced with MySQL!`, 'success');
+            switchTab('orders');
+        }
+
+        // ==========================================
+        // FLEET / DRIVER AGENT LOGIC
+        // ==========================================
+        function renderDriverOrdersTable() {
+            const tbody = document.getElementById('driverOrdersTable');
+            tbody.innerHTML = mockOrders.map(o => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-3.5 font-mono font-bold text-emerald-800">${o.id}</td>
+                    <td class="p-3.5">
+                        <p class="font-bold text-slate-900">${o.customerName}</p>
+                        <p class="text-[10px] text-slate-400">${o.phone}</p>
+                    </td>
+                    <td class="p-3.5 max-w-xs truncate text-[11px] text-slate-600">${o.items}</td>
+                    <td class="p-3.5 font-bold text-slate-900">
+                        ₹${o.total} <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded ml-1 font-normal">${o.paymentMode}</span>
+                    </td>
+                    <td class="p-3.5 font-mono font-semibold">${o.pincode}</td>
+                    <td class="p-3.5">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            o.status === 'DELIVERED' ? 'bg-slate-100 text-slate-700' :
+                            o.status === 'OUT_FOR_DELIVERY' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                        }">${o.status.replace(/_/g, ' ')}</span>
+                    </td>
+                    <td class="p-3.5 text-right">
+                        ${o.status === 'PACKED' ? `
+                            <button onclick="updateOrderStatus('${o.id}', 'OUT_FOR_DELIVERY')" class="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-[10px] font-bold hover:bg-emerald-700">
+                                Start Delivery
+                            </button>
+                        ` : o.status === 'OUT_FOR_DELIVERY' ? `
+                            <button onclick="updateOrderStatus('${o.id}', 'DELIVERED')" class="px-2.5 py-1 bg-slate-900 text-white rounded-lg text-[10px] font-bold hover:bg-slate-800">
+                                Mark Delivered
+                            </button>
+                        ` : '<span class="text-slate-400 text-[10px]">Completed</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const ord = mockOrders.find(o => o.id === orderId);
+            if (ord) {
+                ord.status = newStatus;
+                renderDriverOrdersTable();
+                
+                if (newStatus === 'DELIVERED') {
+                    document.getElementById('step-delivered').classList.remove('opacity-40');
+                    document.getElementById('liveEtaText').innerText = 'Delivered 🎉';
+                    showToast(`Order #${orderId} delivered in Siliguri!`, 'success');
+                } else {
+                    showToast(`Order #${orderId} status updated in MySQL to ${newStatus}`, 'info');
+                }
+            }
+        }
+
+        // ==========================================
+        // SIMULATED GPS ROUTE MOVEMENT
+        // ==========================================
+        function simulateRiderMovement() {
+            const bike = document.getElementById('animatedBike');
+            const statusText = document.getElementById('agentLocationStatus');
+            const gpsText = document.getElementById('gpsCoord');
+            const etaText = document.getElementById('liveEtaText');
+
+            const waypoints = [
+                { x: 80, y: 240, label: 'Departed Bidhan Market Hub', gps: '26.7125° N, 88.4281° E', eta: '22 Mins' },
+                { x: 150, y: 210, label: 'Passing Venus More Crossing', gps: '26.7189° N, 88.4250° E', eta: '18 Mins' },
+                { x: 220, y: 180, label: 'Crossing Mahananda Bridge Link', gps: '26.7230° N, 88.4241° E', eta: '12 Mins' },
+                { x: 260, y: 80, label: 'Near Payel Cinema Hall, Sevoke Rd', gps: '26.7271° N, 88.4236° E', eta: '5 Mins' },
+                { x: 380, y: 40, label: 'Arrived at Customer Doorstep (Salugara)', gps: '26.7320° N, 88.4220° E', eta: 'Arrived' }
+            ];
+
+            gpsStep = (gpsStep + 1) % waypoints.length;
+            const wp = waypoints[gpsStep];
+
+            bike.setAttribute('transform', `translate(${wp.x}, ${wp.y})`);
+            statusText.innerText = wp.label;
+            gpsText.innerText = wp.gps;
+            etaText.innerText = wp.eta;
+
+            showToast(`Rider Location Updated: ${wp.label}`, 'info');
+        }
+
+        // ==========================================
+        // MYSQL 8.0 ARCHITECTURE HUB VIEWER
+        // ==========================================
+        const SQL_SCRIPTS = {
+            orders: {
+                title: "MySQL 8.0 `delivery_orders` DDL & Spatial Index",
+                code: `-- =========================================================
+-- SILIGURI EXPRESS: MySQL 8.0 Delivery Orders Table DDL
+-- Database: siliguri_express_db
+-- Engine: InnoDB | Character Set: utf8mb4_unicode_ci
+-- =========================================================
+
+CREATE DATABASE IF NOT EXISTS siliguri_express_db;
+USE siliguri_express_db;
+
+CREATE TABLE IF NOT EXISTS delivery_orders (
+    order_id VARCHAR(32) NOT NULL PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    customer_phone VARCHAR(15) NOT NULL,
+    pincode VARCHAR(6) NOT NULL CHECK (pincode IN ('734001','734003','734005','734006','734010','734011','734012')),
+    delivery_address TEXT NOT NULL,
+    
+    -- MySQL 8.0 Spatial Data Type for GPS Coordinates
+    destination_point POINT NOT NULL SRID 4326,
+    
+    hub_id INT UNSIGNED NOT NULL,
+    assigned_agent_id INT UNSIGNED DEFAULT NULL,
+    
+    total_amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    delivery_fee DECIMAL(6, 2) NOT NULL DEFAULT 25.00,
+    payment_mode ENUM('UPI', 'COD', 'CARD') NOT NULL DEFAULT 'UPI',
+    order_status ENUM('PENDING', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+    
+    -- MySQL 8.0 JSON Data Type for dynamic item snapshots & logs
+    items_json JSON NOT NULL,
+    status_history_json JSON DEFAULT (JSON_ARRAY()),
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    -- MySQL 8.0 Spatial Index for Geographic Proximity Queries
+    SPATIAL INDEX idx_spatial_dest (destination_point),
+    INDEX idx_pincode_status (pincode, order_status),
+    INDEX idx_hub_status (hub_id, order_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`
+            },
+            products: {
+                title: "MySQL 8.0 `products` Table & Fulltext Index",
+                code: `-- =========================================================
+-- SILIGURI EXPRESS: Products Catalog DDL & Indexing
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS products (
+    product_id VARCHAR(32) NOT NULL PRIMARY KEY,
+    product_name VARCHAR(150) NOT NULL,
+    category ENUM('darjeeling-tea', 'local-groceries', 'sweets-snacks', 'medicines') NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
+    hub_location_id INT UNSIGNED NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- MySQL 8.0 FULLTEXT Index for fast local search
+    FULLTEXT INDEX idx_ft_products (product_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Sample Insert for Local Siliguri Storefront
+INSERT INTO products (product_id, product_name, category, unit_price, stock_quantity, hub_location_id) 
+VALUES 
+('p1', 'Darjeeling First Flush Black Tea (250g)', 'darjeeling-tea', 480.00, 150, 1),
+('p2', 'Fresh Bengali Sweets - Mishti Doi (500g)', 'sweets-snacks', 160.00, 80, 2),
+('p3', 'Matigara Fresh Organic Vegetable Basket', 'local-groceries', 290.00, 200, 3);`
+            },
+            hubs: {
+                title: "MySQL 8.0 `siliguri_hubs` Table with ST_PointFromText",
+                code: `-- =========================================================
+-- SILIGURI EXPRESS: Warehouse Hub Locations
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS siliguri_hubs (
+    hub_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    hub_name VARCHAR(100) NOT NULL,
+    pincode VARCHAR(6) NOT NULL,
+    hub_coordinates POINT NOT NULL SRID 4326,
+    is_active BOOLEAN DEFAULT TRUE,
+    SPATIAL INDEX idx_hub_geo (hub_coordinates)
+) ENGINE=InnoDB;
+
+-- Insert Local Hubs in Siliguri Region
+INSERT INTO siliguri_hubs (hub_name, pincode, hub_coordinates) VALUES
+('Bidhan Market Central Hub', '734001', ST_PointFromText('POINT(26.7125 88.4281)', 4326)),
+('Sevoke Road Salugara Hub', '734010', ST_PointFromText('POINT(26.7320 88.4220)', 4326)),
+('Matigara Wholesale Produce Hub', '734011', ST_PointFromText('POINT(26.7100 88.3800)', 4326)),
+('Pradhan Nagar Delivery Hub', '734003', ST_PointFromText('POINT(26.7280 88.4150)', 4326));`
+            },
+            agents: {
+                title: "MySQL 8.0 `delivery_agents` & GPS Tracking",
+                code: `-- =========================================================
+-- SILIGURI EXPRESS: Fleet Agents & GPS Live Location
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS delivery_agents (
+    agent_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    agent_name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL UNIQUE,
+    vehicle_number VARCHAR(20) NOT NULL,
+    current_location POINT SRID 4326,
+    is_online BOOLEAN DEFAULT TRUE,
+    active_order_count INT UNSIGNED DEFAULT 0,
+    rating DECIMAL(2,1) DEFAULT 5.0,
+    SPATIAL INDEX idx_agent_loc (current_location)
+) ENGINE=InnoDB;`
+            },
+            queries: {
+                title: "MySQL 8.0 Advanced Distance & Analytical SQL Queries",
+                code: `-- =========================================================
+-- ADVANCED MYSQL 8.0 QUERIES FOR LOGISTICS IN SILIGURI
+-- =========================================================
+
+-- 1. Find Nearest Siliguri Delivery Hub using MySQL 8.0 Spatial Functions (ST_Distance_Sphere)
+SELECT 
+    hub_id,
+    hub_name,
+    pincode,
+    ROUND(ST_Distance_Sphere(hub_coordinates, ST_PointFromText('POINT(26.7271 88.4236)', 4326)) / 1000, 2) AS distance_in_km
+FROM siliguri_hubs
+WHERE is_active = TRUE
+ORDER BY distance_in_km ASC
+LIMIT 1;
+
+-- 2. MySQL 8.0 CTE (Common Table Expression) + Window Function for Daily Rider Revenue
+WITH DailyFleetRevenue AS (
+    SELECT 
+        assigned_agent_id,
+        COUNT(order_id) AS total_orders,
+        SUM(delivery_fee) AS total_delivery_earnings,
+        DENSE_RANK() OVER (ORDER BY COUNT(order_id) DESC) AS rider_rank
+    FROM delivery_orders
+    WHERE order_status = 'DELIVERED' 
+      AND DATE(created_at) = CURRENT_DATE()
+    GROUP BY assigned_agent_id
+)
+SELECT 
+    r.rider_rank,
+    a.agent_name,
+    r.total_orders,
+    r.total_delivery_earnings
+FROM DailyFleetRevenue r
+JOIN delivery_agents a ON r.assigned_agent_id = a.agent_id;
+
+-- 3. Querying MySQL 8.0 JSON array elements for JSON_EXTRACT
+SELECT 
+    order_id,
+    customer_name,
+    JSON_EXTRACT(items_json, '$[*].product_name') AS item_names,
+    JSON_UNQUOTE(JSON_EXTRACT(status_history_json, '$[0].status')) AS initial_status
+FROM delivery_orders
+WHERE JSON_CONTAINS(items_json, '{"category": "darjeeling-tea"}');`
+            }
+        };
+
+        function showSqlTable(tableKey) {
+            document.querySelectorAll('.sql-tab-btn').forEach(btn => {
+                btn.className = 'sql-tab-btn w-full p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-left transition-all flex items-center justify-between';
+            });
+            event.currentTarget.className = 'sql-tab-btn active w-full p-3 rounded-xl border border-emerald-500 bg-emerald-50 text-left transition-all flex items-center justify-between';
+
+            const script = SQL_SCRIPTS[tableKey];
+            if (script) {
+                document.getElementById('sqlViewTitle').innerText = script.title;
+                document.getElementById('sqlCodeContainer').textContent = script.code;
+            }
+        }
+
+        function copyMySqlSchema() {
+            const allCode = Object.values(SQL_SCRIPTS).map(s => s.code).join('\n\n');
+            
+            // Clipboard copy via document.execCommand fallback safety
+            const textarea = document.createElement('textarea');
+            textarea.value = allCode;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast('Full MySQL 8.0 DDL & Query script copied to clipboard!', 'success');
+        }
+
+        // ==========================================
+        // TOAST NOTIFICATIONS
+        // ==========================================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+
+            const bgClass = type === 'success' ? 'bg-emerald-800 text-white border-emerald-600' :
+                            type === 'warning' ? 'bg-amber-800 text-white border-amber-600' :
+                            'bg-slate-900 text-white border-slate-700';
+
+            const icon = type === 'success' ? 'fa-circle-check text-emerald-400' :
+                         type === 'warning' ? 'fa-triangle-exclamation text-amber-400' :
+                         'fa-circle-info text-sky-400';
+
+            toast.className = `p-3 rounded-xl border shadow-xl flex items-center gap-2.5 text-xs font-semibold transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
